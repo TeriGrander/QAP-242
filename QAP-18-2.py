@@ -12,3 +12,5 @@ print(f'Теперь с вами работают {len(coworkers)} челове�
 check_person = input('Введите имя для проверки: ')
 if check_person in coworkers: print('Да, это ваш коллега')
 else: print('Нет, этот человек с вами не работает')
+
+# test changes for lesson about git
