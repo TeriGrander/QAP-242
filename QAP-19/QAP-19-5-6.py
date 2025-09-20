@@ -1,11 +1,11 @@
 # Первое решение. Простое, красивое, логичное, удовлетворяет условиям, но на данный момент не проходит 2 теста из 4 в курсе.
-# def process_test_data(*args, **kwargs):
-#     result = []
-#     for i in args:
-#         result.append(str(i))
-#     for key, value in kwargs.items():
-#         result.append(f'{key}={value}')
-#     return ', '.join(result)
+def process_test_data(*args, **kwargs):
+    result = []
+    for i in args:
+        result.append(str(i))
+    for key, value in kwargs.items():
+        result.append(f'{key}={value}')
+    return ', '.join(result)
 
 # Второе решение. Громоздкое, но зато все 4 теста проходят. Вот только эти лишние запятые мне не нравятся!!!
 def process_test_data(*args, **kwargs):
