@@ -1,9 +1,12 @@
 import time
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from settings import valid_email, valid_password
 
 
 def test_show_all_pets(web_browser):
+    web_browser.implicitly_wait(5)
     # Вводим email
     web_browser.find_element(By.ID, 'email').send_keys(valid_email)
     # Вводим пароль
@@ -12,10 +15,13 @@ def test_show_all_pets(web_browser):
     web_browser.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
     # Проверяем, что мы оказались на главной странице пользователя
     assert web_browser.find_element(By.TAG_NAME, 'h1').text == "PetFriends"
-    images = web_browser.find_elements(By.CSS_SELECTOR, '.card-deck .card-img-top')
-    names = web_browser.find_elements(By.CSS_SELECTOR, '.card-deck .card-title')
-    descriptions = web_browser.find_elements(By.CSS_SELECTOR, '.card-deck .card-text')
-
+    images = web_browser.find_elements(
+        By.CSS_SELECTOR, '.card-deck .card-img-top')
+    names = web_browser.find_elements(
+        By.CSS_SELECTOR, '.card-deck .card-title')
+    descriptions = web_browser.find_elements(
+        By.CSS_SELECTOR, '.card-deck .card-text')
+    
     for i in range(len(names)):
         assert images[i].get_attribute('src') != ''
         assert names[i].text != ''
@@ -28,69 +34,79 @@ def test_show_all_pets(web_browser):
 
 def test_all_user_pets_shown(web_browser):
     # enter email
-    field_email = web_browser.find_element(By.ID, "email")
+    field_email = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "email")))
     field_email.clear()
     field_email.send_keys(valid_email)
 
     # enter password
-    field_pass = web_browser.find_element(By.ID, "pass")
+    field_pass = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "pass")))
     field_pass.clear()
     field_pass.send_keys(valid_password)
 
     # click submit button
-    btn_submit = web_browser.find_element(By.XPATH, "//button[@type='submit']")
+    btn_submit = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.XPATH, "//button[@type='submit']")))
     btn_submit.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find "My pets" link and click
-    lnk_my_pets = web_browser.find_element(By.LINK_TEXT, u'Мои питомцы')
+    lnk_my_pets = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.LINK_TEXT, u'Мои питомцы')))
     lnk_my_pets.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find pets number in user info
-    usr_info = web_browser.find_element(By.CSS_SELECTOR, 'div.\.col-sm-4.left')
+    usr_info = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.CSS_SELECTOR, 'div.\.col-sm-4.left')))
     user_text = usr_info.text.split('\n')
     pets_number = int(user_text[1][10:])
 
     # find number of rows in table
     rows_xpath = '//*[@id="all_my_pets"]/table/tbody/tr'
-    rows = web_browser.find_elements(By.XPATH, rows_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, rows_xpath)))
     assert len(rows) == pets_number
 
 
 def test_half_pets_have_photo(web_browser):
     # enter email
-    field_email = web_browser.find_element(By.ID, "email")
+    field_email = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "email")))
     field_email.clear()
     field_email.send_keys(valid_email)
 
     # enter password
-    field_pass = web_browser.find_element(By.ID, "pass")
+    field_pass = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "pass")))
     field_pass.clear()
     field_pass.send_keys(valid_password)
 
     # click submit button
-    btn_submit = web_browser.find_element(By.XPATH, "//button[@type='submit']")
+    btn_submit = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.XPATH, "//button[@type='submit']")))
     btn_submit.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find "My pets" link and click
-    lnk_my_pets = web_browser.find_element(By.LINK_TEXT, u'Мои питомцы')
+    lnk_my_pets = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.LINK_TEXT, u'Мои питомцы')))
     lnk_my_pets.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find pets number
-    usr_info = web_browser.find_element(By.CSS_SELECTOR, 'div.\.col-sm-4.left')
+    usr_info = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.CSS_SELECTOR, 'div.\.col-sm-4.left')))
     user_text = usr_info.text.split('\n')
     pets_number = int(user_text[1][10:])
 
     # find pets info
     images_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/th/img'
-    rows = web_browser.find_elements(By.XPATH, images_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, images_xpath)))
     images_data = []
     for r in rows:
         images_data.append(r.get_attribute('src') != '')
@@ -102,43 +118,48 @@ def test_half_pets_have_photo(web_browser):
 
 def test_all_user_pets_have_data(web_browser):
     # enter email
-    field_email = web_browser.find_element(By.ID, "email")
+    field_email = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "email")))
     field_email.clear()
     field_email.send_keys(valid_email)
 
     # enter password
-    field_pass = web_browser.find_element(By.ID, "pass")
+    field_pass = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "pass")))
     field_pass.clear()
     field_pass.send_keys(valid_password)
 
     # click submit button
-    btn_submit = web_browser.find_element(By.XPATH, "//button[@type='submit']")
+    btn_submit = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.XPATH, "//button[@type='submit']")))
     btn_submit.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find "My pets" link and click
-    lnk_my_pets = web_browser.find_element(By.LINK_TEXT, u'Мои питомцы')
+    lnk_my_pets = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.LINK_TEXT, u'Мои питомцы')))
     lnk_my_pets.click()
-
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
 
     # find pets info
     names_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[1]'
     types_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[2]'
     ages_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[3]'
 
-    rows = web_browser.find_elements(By.XPATH, names_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, names_xpath)))
     names_data = []
     for r in rows:
         names_data.append(r.text)
 
-    rows = web_browser.find_elements(By.XPATH, types_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, types_xpath)))
     types_data = []
     for r in rows:
         types_data.append(r.text)
 
-    rows = web_browser.find_elements(By.XPATH, ages_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, ages_xpath)))
     ages_data = []
     for r in rows:
         ages_data.append(r.text)
@@ -152,31 +173,34 @@ def test_all_user_pets_have_data(web_browser):
 
 def test_all_user_pets_have_diff_names(web_browser):
     # enter email
-    field_email = web_browser.find_element(By.ID, "email")
+    field_email = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "email")))
     field_email.clear()
     field_email.send_keys(valid_email)
 
     # enter password
-    field_pass = web_browser.find_element(By.ID, "pass")
+    field_pass = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "pass")))
     field_pass.clear()
     field_pass.send_keys(valid_password)
 
     # click submit button
-    btn_submit = web_browser.find_element(By.XPATH, "//button[@type='submit']")
+    btn_submit = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.XPATH, "//button[@type='submit']")))
     btn_submit.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find "My pets" link and click
-    lnk_my_pets = web_browser.find_element(By.LINK_TEXT, u'Мои питомцы')
+    lnk_my_pets = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.LINK_TEXT, u'Мои питомцы')))
     lnk_my_pets.click()
-
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
 
     # find pets info
     names_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[1]'
 
-    rows = web_browser.find_elements(By.XPATH, names_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, names_xpath)))
     names_data = []
     for r in rows:
         names_data.append(r.text)
@@ -189,43 +213,48 @@ def test_all_user_pets_have_diff_names(web_browser):
 
 def test_no_duplicates_exist(web_browser):
     # enter email
-    field_email = web_browser.find_element(By.ID, "email")
+    field_email = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "email")))
     field_email.clear()
     field_email.send_keys(valid_email)
 
     # enter password
-    field_pass = web_browser.find_element(By.ID, "pass")
+    field_pass = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((By.ID, "pass")))
     field_pass.clear()
     field_pass.send_keys(valid_password)
 
     # click submit button
-    btn_submit = web_browser.find_element(By.XPATH, "//button[@type='submit']")
+    btn_submit = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.XPATH, "//button[@type='submit']")))
     btn_submit.click()
 
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
-
     # find "My pets" link and click
-    lnk_my_pets = web_browser.find_element(By.LINK_TEXT, u'Мои питомцы')
+    lnk_my_pets = WebDriverWait(web_browser, 10).until(
+        EC.visibility_of_element_located((
+            By.LINK_TEXT, u'Мои питомцы')))
     lnk_my_pets.click()
-
-    time.sleep(0.1)  # because I don't know yet how to wait for element to appear!
 
     # find pets info
     names_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[1]'
     types_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[2]'
     ages_xpath = '//*[@id="all_my_pets"]/table/tbody/tr/td[3]'
 
-    rows = web_browser.find_elements(By.XPATH, names_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, names_xpath)))
     names_data = []
     for r in rows:
         names_data.append(r.text)
 
-    rows = web_browser.find_elements(By.XPATH, types_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, types_xpath)))
     types_data = []
     for r in rows:
         types_data.append(r.text)
 
-    rows = web_browser.find_elements(By.XPATH, ages_xpath)
+    rows = WebDriverWait(web_browser, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, ages_xpath)))
     ages_data = []
     for r in rows:
         ages_data.append(r.text)
