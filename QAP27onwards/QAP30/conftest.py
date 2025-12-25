@@ -31,7 +31,8 @@ def web_browser(request, selenium):
             browser.execute_script("document.body.bgColor = 'white';")
 
             # Make screen-shot for local debug:
-            browser.save_screenshot('screenshots/' + str(uuid.uuid4()) + '.png')
+            browser.save_screenshot(
+                'screenshots/' + str(uuid.uuid4()) + '.png')
 
             # For happy debugging:
             print('URL: ', browser.current_url)

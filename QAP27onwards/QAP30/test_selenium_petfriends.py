@@ -1,4 +1,3 @@
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,7 +20,7 @@ def test_show_all_pets(web_browser):
         By.CSS_SELECTOR, '.card-deck .card-title')
     descriptions = web_browser.find_elements(
         By.CSS_SELECTOR, '.card-deck .card-text')
-    
+
     for i in range(len(names)):
         assert images[i].get_attribute('src') != ''
         assert names[i].text != ''
