@@ -12,7 +12,8 @@ name_pos = [tests.helpers.generate_string(20),
 name_neg = [tests.helpers.generate_string(255),
             tests.helpers.generate_string(1001),
             tests.helpers.special_chars(),
-            123
+            123,
+            ''
             ]
 animal_type_pos = [tests.helpers.generate_string(20),
                    tests.helpers.russian_chars(),
@@ -145,10 +146,10 @@ class TestAddPetSimple():
                              ids=tests.helpers.ids_gen('animal_type'))
     @pytest.mark.parametrize('name', name_neg,
                              ids=tests.helpers.ids_gen('name'))
-    def test_add_pet_simple_negative_age(self, get_key, name,
-                                         animal_type, age,
-                                         header_accept,
-                                         header_content_type):
+    def test_add_pet_simple_negative_data(self, get_key, name,
+                                          animal_type, age,
+                                          header_accept,
+                                          header_content_type):
         """Проверяем обработку некорректных данных в запросе на
         добавление питомца без фото.
         На данный момент в API никакой валидации данных нет, и питомцы
@@ -162,3 +163,45 @@ class TestAddPetSimple():
         assert name not in result
         if 'id' in result:
             pf.delete_pet({'key': get_key}, result['id'])
+
+    def test_add_pet_simple_create_test_data1(self, get_key,
+                                              name='',
+                                              animal_type='type',
+                                              age=1):
+        """Проверяем обработку некорректных данных в запросе на
+        добавление питомца без фото.
+        На данный момент в API никакой валидации данных нет, и питомцы
+        добавляются даже с самыми некорректно-выглядящими данными.
+        """
+        status, result = pf.post_add_pet_simple({'key': get_key}, name,
+                                                animal_type, age)
+
+        assert status == 200
+
+    def test_add_pet_simple_create_test_data2(self, get_key,
+                                              name='name',
+                                              animal_type='',
+                                              age=1):
+        """Проверяем обработку некорректных данных в запросе на
+        добавление питомца без фото.
+        На данный момент в API никакой валидации данных нет, и питомцы
+        добавляются даже с самыми некорректно-выглядящими данными.
+        """
+        status, result = pf.post_add_pet_simple({'key': get_key}, name,
+                                                animal_type, age)
+
+        assert status == 200
+        
+    def test_add_pet_simple_create_test_data3(self, get_key,
+                                              name='name',
+                                              animal_type='type',
+                                              age=''):
+        """Проверяем обработку некорректных данных в запросе на
+        добавление питомца без фото.
+        На данный момент в API никакой валидации данных нет, и питомцы
+        добавляются даже с самыми некорректно-выглядящими данными.
+        """
+        status, result = pf.post_add_pet_simple({'key': get_key}, name,
+                                                animal_type, age)
+
+        assert status == 200        
